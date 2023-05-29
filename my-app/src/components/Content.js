@@ -9,7 +9,8 @@ export class Content extends Component {
     super(props);
     
     this.state = {
-      isLoaded: false
+      isLoaded: false,
+      posts: []
     }
   }
 
@@ -19,8 +20,19 @@ export class Content extends Component {
     setTimeout(()=>{
         this.setState({
             isLoaded: true,
+            posts: savedPosts,
         })
     }, 2000)
+  }
+  // check docs/event_handler.png for explanation
+  handleChange = (e) => {
+    const name = e.target.value.toLowerCase();
+    const filteredPosts = savedPosts.filter((post)=>{
+      return post.name.toLocaleLowerCase().includes(name);
+    })
+    this.setState({
+      posts: filteredPosts
+    })
   }
 
   render() {
@@ -28,6 +40,17 @@ export class Content extends Component {
       <div className={css.Content}>
         <div className={css.TitleBar}>
           <h1>My Photos</h1>
+          <form>
+            <label htmlFor='searchinput'>Search</label>
+            <input
+            type='search'
+            id='searchinput'
+            placeholder='By Author'
+            // check docs/onchange_call.png for explanation
+            onChange={(e) => this.handleChange(e)}
+            />
+            <h4>posts found {this.state.posts.length}</h4>
+          </form>
         </div>
         <div className={css.SearchResults}>
           {/* Part 1: Creating map function */}
@@ -52,7 +75,7 @@ export class Content extends Component {
           {/* Within the css.SearchResults div, conditionally render the PostItem
           component vs the Loader component based on the state of isLoaded */}
           {
-            this.state.isLoaded ? <PostItem savedPosts={savedPosts} /> : <Loader />
+            this.state.isLoaded ? <PostItem savedPosts={this.state.posts} /> : <Loader />
           }
         </div>
       </div>
